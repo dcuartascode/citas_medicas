@@ -1,103 +1,108 @@
 from hospital import Hospital
 from persona_factory import PersonasFactory
+from rich.console import Console
+from rich.table import Table
 
+console = Console()
 hospital = Hospital()
 
-while True:
-    print("\n--- Menú ---")
-    print("1. Agregar persona")
-    print("2. Pedir cita")
-    print("3. Cancelar cita")
-    print("4. Asignar médico de preferencia")
-    print("5. Ver citas pendientes")
-    print("6. Salir")
+def mostrar_menu():
+    console.print("\n[bold green]--- Menú ---[/bold green]")
+    console.print("1. Agregar persona")
+    console.print("2. Pedir cita")
+    console.print("3. Cancelar cita")
+    console.print("4. Asignar médico de preferencia")
+    console.print("5. Ver citas pendientes")
+    console.print("6. Salir")
 
-    opcion = input("Seleccione una opción: ")
+while True:
+    mostrar_menu()
+    opcion = console.input("[bold blue]Seleccione una opción: [/bold blue]")
 
     if opcion == "1":
-        tipo_persona = input(
-            "Ingrese el tipo de persona (médico o paciente): ")
-        identificacion = input("Ingrese la identificación: ")
-        nombre = input("Ingrese el nombre: ")
-        celular = input("Ingrese el celular: ")
+        tipo_persona = console.input("Ingrese el tipo de persona ([cyan]médico[/cyan] o [cyan]paciente[/cyan]): ")
+        identificacion = console.input("Ingrese la identificación: ")
+        nombre = console.input("Ingrese el nombre: ")
+        celular = console.input("Ingrese el celular: ")
 
         if tipo_persona.lower() == "medico":
-            especialidad = input("Ingrese la especialidad: ")
-            persona = PersonasFactory.crear_persona(
-                "medico", identificacion, nombre, celular, especialidad)
+            especialidad = console.input("Ingrese la especialidad: ")
+            persona = PersonasFactory.crear_persona("medico", identificacion, nombre, celular, especialidad)
             hospital.agregar_medico(persona)
+            console.print(f"[green]Médico {nombre} agregado exitosamente.[/green]")
         elif tipo_persona.lower() == "paciente":
-            correo = input("Ingrese el correo: ")
-            persona = PersonasFactory.crear_persona(
-                "paciente", identificacion, nombre, celular, correo=correo)
+            correo = console.input("Ingrese el correo: ")
+            persona = PersonasFactory.crear_persona("paciente", identificacion, nombre, celular, correo=correo)
             hospital.agregar_paciente(persona)
+            console.print(f"[green]Paciente {nombre} agregado exitosamente.[/green]")
         else:
-            print("Tipo de persona inválido.")
+            console.print("[red]Tipo de persona inválido.[/red]")
 
     elif opcion == "2":
-        id_paciente = input("Ingrese la identificación del paciente: ")
-        id_medico = input("Ingrese la identificación del médico: ")
-        fecha = input("Ingrese la fecha de la cita (YYYY-MM-DD): ")
-        motivo = input("Ingrese el motivo de la cita: ")
+        id_paciente = console.input("Ingrese la identificación del paciente: ")
+        id_medico = console.input("Ingrese la identificación del médico: ")
+        fecha = console.input("Ingrese la fecha de la cita (YYYY-MM-DD): ")
+        motivo = console.input("Ingrese el motivo de la cita: ")
 
-        paciente = next(
-            (p for p in hospital.usuarios if p.identificacion == id_paciente), None)
-        medico = next(
-            (m for m in hospital.medicos if m.identificacion == id_medico), None)
+        paciente = hospital.buscar_paciente(id_paciente)
+        medico = hospital.buscar_medico(id_medico)
 
         if paciente and medico:
             paciente.pedir_cita(medico, fecha, motivo)
         else:
-            print("Paciente o médico no encontrado.")
+            console.print("[red]Paciente o médico no encontrado.[/red]")
 
     elif opcion == "3":
-        id_paciente = int(input("Ingrese la identificación del paciente: "))
-        paciente = next(
-            (p for p in hospital.usuarios if p.identificacion == id_paciente), None)
+        id_paciente = console.input("Ingrese la identificación del paciente: ")
+        paciente = hospital.buscar_paciente(id_paciente)
 
         if paciente:
-            print("Citas pendientes:")
-            for i, cita in enumerate(paciente.agenda.citas_pendientes):
-                print(f"{i+1}. {cita}")
+            console.print("[bold]Citas pendientes:[/bold]")
+            table = Table(title="Citas Pendientes")
+            table.add_column("No.", justify="right")
+            table.add_column("Fecha", style="cyan")
+            table.add_column("Médico", style="magenta")
 
-            opcion_cita = int(input("Seleccione la cita a cancelar: "))
+            for i, cita in enumerate(paciente.agenda.citas_pendientes):
+                table.add_row(str(i+1), cita.fecha, cita.medico.nombre)
+
+            console.print(table)
+
+            opcion_cita = int(console.input("Seleccione la cita a cancelar: "))
             if 1 <= opcion_cita <= len(paciente.agenda.citas_pendientes):
                 cita_a_cancelar = paciente.agenda.citas_pendientes[opcion_cita - 1]
                 paciente.cancelar_cita(cita_a_cancelar)
             else:
-                print("Opción inválida.")
+                console.print("[red]Opción inválida.[/red]")
         else:
-            print("Paciente no encontrado.")
+            console.print("[red]Paciente no encontrado.[/red]")
 
     elif opcion == "4":
-        id_paciente = int(input("Ingrese la identificación del paciente: "))
-        id_medico = int(input("Ingrese la identificación del médico: "))
+        id_paciente = console.input("Ingrese la identificación del paciente: ")
+        id_medico = console.input("Ingrese la identificación del médico: ")
 
-        paciente = next(
-            (p for p in hospital.usuarios if p.identificacion == id_paciente), None)
-        medico = next(
-            (m for m in hospital.medicos if m.identificacion == id_medico), None)
+        paciente = hospital.buscar_paciente(id_paciente)
+        medico = hospital.buscar_medico(id_medico)
 
         if paciente and medico:
             paciente.asignar_medico_preferencia(medico)
         else:
-            print("Paciente o médico no encontrado.")
+            console.print("[red]Paciente o médico no encontrado.[/red]")
 
     elif opcion == "5":
-        id_paciente = int(input("Ingrese la identificación del paciente: "))
-        paciente = next(
-            (p for p in hospital.usuarios if p.identificacion == id_paciente), None)
+        id_paciente = console.input("Ingrese la identificación del paciente: ")
+        paciente = hospital.buscar_paciente(id_paciente)
 
         if paciente:
-            print("Citas pendientes:")
+            console.print("[bold]Citas pendientes:[/bold]")
             for cita in paciente.agenda.citas_pendientes:
-                print(cita)
+                console.print(cita)
         else:
-            print("Paciente no encontrado.")
+            console.print("[red]Paciente no encontrado.[/red]")
 
     elif opcion == "6":
-        print("Saliendo del programa...")
+        console.print("[bold green]Saliendo del programa...[/bold green]")
         break
 
     else:
-        print("Opción inválida.")
+        console.print("[red]Opción inválida.[/red]")
