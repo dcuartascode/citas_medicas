@@ -1,3 +1,6 @@
+from medico import Medico
+from paciente import Paciente
+
 class PersonasFactory:
     @staticmethod
     def crear_persona(tipo, identificacion, nombre, celular, especialidad=None, correo=None):

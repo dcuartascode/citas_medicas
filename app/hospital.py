@@ -1,7 +1,13 @@
+import json
+
 class Hospital:
     def __init__(self):
         self.pacientes = []
         self.medicos = []
+
+with open('medicos.json', 'r') as archivo:
+    medicos_data = json.load(archivo)
+    print(medicos_data)
 
     def agregar_paciente(self, paciente):
         self.pacientes.append(paciente)

@@ -1,5 +1,7 @@
 from agenda import Agenda
 from cita import Cita
+from persona import Persona
+
 
 class Paciente(Persona):
     def __init__(self, identificacion, nombre, celular, correo):
