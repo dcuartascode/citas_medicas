@@ -4,7 +4,14 @@ class Agenda:
 
     def agregar_cita(self, cita):
         self.citas_pendientes.append(cita)
-        print(f"Cita agregada para el {cita.fecha} con el Dr. {cita.medico.nombre}")
+
+    def cancelar_cita(self, cita):
+        if cita in self.citas_pendientes:
+            self.citas_pendientes.remove(cita)
+            print("Cita cancelada correctamente.")
+        else:
+            print("La cita no se encuentra en la agenda.")
 
     def verificar_disponibilidad(self, fecha):
-        return fecha not in [cita.fecha for cita in self.citas_pendientes]
+        return True
+

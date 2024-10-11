@@ -2,7 +2,6 @@ from agenda import Agenda
 from cita import Cita
 from persona import Persona
 
-
 class Paciente(Persona):
     def __init__(self, identificacion, nombre, celular, correo):
         super().__init__(identificacion, nombre, celular)
@@ -24,5 +23,6 @@ class Paciente(Persona):
             print(f"No hay disponibilidad con el Dr. {medico.nombre} en la fecha {fecha}")
 
     def cancelar_cita(self, cita):
-        cita.cancelar_cita()
-        print(f"Cita cancelada por el paciente {self.nombre}")
+        self.agenda.cancelar_cita(cita)
+        cita.cancelar_cita()  # Esto cancelará la cita en sí
+        print(f"Cita cancelada {self.nombre}")

@@ -70,7 +70,7 @@ while True:
 
             # Mostrar citas pendientes
             for i, cita in enumerate(paciente.agenda.citas_pendientes):
-                table.add_row(str(i+1), cita['fecha'], cita['medico'].nombre)
+                table.add_row(str(i + 1), cita.fecha, cita.medico.nombre)
 
             console.print(table)
 
@@ -103,16 +103,16 @@ while True:
 
         if paciente:
             console.print("[bold]Citas pendientes:[/bold]")
-            
+
             # Mostrar citas pendientes
             if paciente.agenda.citas_pendientes:
                 table = Table(title="Citas Pendientes")
+                table.add_column("No.", justify="right")
                 table.add_column("Fecha", style="cyan")
                 table.add_column("Médico", style="magenta")
-                table.add_column("Motivo", style="yellow")
 
-                for cita in paciente.agenda.citas_pendientes:
-                    table.add_row(cita['fecha'], cita['medico'].nombre, cita['motivo'])
+                for i, cita in enumerate(paciente.agenda.citas_pendientes):
+                    table.add_row(str(i + 1), cita.fecha, cita.medico.nombre)
 
                 console.print(table)
             else:
@@ -127,3 +127,4 @@ while True:
 
     else:
         console.print("[red]Opción inválida.[/red]")
+
