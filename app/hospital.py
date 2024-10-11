@@ -19,7 +19,7 @@ class Hospital:
 
     def cargar_medicos(self):
         try:
-            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\app\medicos.json", 'r', encoding='utf-8') as archivo:
+            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\medicos.json", 'r', encoding='utf-8') as archivo:
                 medicos_json = json.load(archivo)
                 for medico_data in medicos_json:
                     medico = Medico(
@@ -35,7 +35,7 @@ class Hospital:
 
     def cargar_pacientes(self):
         try:
-            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\app\pacientes.csv", 'r', encoding='utf-8') as archivo:
+            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\pacientes.csv", 'r', encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
                 next(lector_csv)  # Ignorar encabezado si existe
                 for fila in lector_csv:
@@ -52,7 +52,7 @@ class Hospital:
 
     def cargar_citas(self):
         try:
-            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\app\citas.csv", 'r', encoding='utf-8') as archivo:
+            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\citas.csv", 'r', encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
                 next(lector_csv)  # Ignorar encabezado si existe
                 for fila in lector_csv:
