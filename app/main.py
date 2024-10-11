@@ -50,7 +50,7 @@ while True:
         if paciente and medico:
             # Verificar si el médico tiene disponibilidad y asignar la cita
             if medico.verificar_disponibilidad(fecha):
-                paciente.pedir_cita(medico, fecha, motivo)  # Aquí guardamos la cita en el paciente
+                paciente.pedir_cita(medico, fecha, motivo) 
                 console.print(f"[green]Cita asignada exitosamente para {paciente.nombre} con el Dr. {medico.nombre}.[/green]")
             else:
                 console.print("[red]El médico no tiene disponibilidad en esa fecha.[/red]")

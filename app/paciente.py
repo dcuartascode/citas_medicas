@@ -24,5 +24,5 @@ class Paciente(Persona):
 
     def cancelar_cita(self, cita):
         self.agenda.cancelar_cita(cita)
-        cita.cancelar_cita()  # Esto cancelará la cita en sí
+        cita.cancelar_cita()  
         print(f"Cita cancelada {self.nombre}")

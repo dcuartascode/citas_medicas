@@ -7,12 +7,10 @@ from rich.console import Console
 
 class Hospital:
     def __init__(self):
-        self.console = Console()  # Crear una instancia de Console
+        self.console = Console()  
         self.pacientes = []
         self.medicos = []
-        self.citas = []  # Almacena las citas
-
-        # Cargar médicos, pacientes y citas al inicializar la clase
+        self.citas = []  
         self.cargar_medicos()
         self.cargar_pacientes()
         self.cargar_citas()
@@ -37,7 +35,7 @@ class Hospital:
         try:
             with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\pacientes.csv", 'r', encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
-                next(lector_csv)  # Ignorar encabezado si existe
+                next(lector_csv) 
                 for fila in lector_csv:
                     paciente = Paciente(
                         fila[0],  # ID
@@ -54,20 +52,19 @@ class Hospital:
         try:
             with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\citas.csv", 'r', encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
-                next(lector_csv)  # Ignorar encabezado si existe
+                next(lector_csv) 
                 for fila in lector_csv:
                     paciente = self.buscar_paciente(fila[1])  # ID del paciente
                     medico = self.buscar_medico(fila[2])  # ID del médico
                     if paciente and medico:
-                        # Crear un objeto Cita con los datos
                         cita = Cita(
                             paciente,
                             medico,
                             fila[0]  # Fecha de la cita
                         )
-                        self.citas.append(cita)  # Agregar la cita a la lista de citas del hospital
-                        paciente.agenda.agregar_cita(cita)  # Agregar la cita a la agenda del paciente
-                        medico.agenda.agregar_cita(cita)  # Agregar la cita a la agenda del médico
+                        self.citas.append(cita) 
+                        paciente.agenda.agregar_cita(cita)  
+                        medico.agenda.agregar_cita(cita) 
             self.console.print(f"[green]Se han cargado {len(self.citas)} citas.[/green]")
         except Exception as e:
             self.console.print(f"[red]Error al cargar citas: {e}[/red]")
