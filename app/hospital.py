@@ -1,13 +1,20 @@
 import json
+import csv
+with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\app\medicos.json", 'r') as archivo:
+    medicos_json = json.load(archivo)
+    
+with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\app\pacientes.csv", 'r') as archivo:
+    pacientes_csv = csv.reader(archivo)
+
+with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\app\citas.csv", 'r') as archivo:
+    citas_csv = csv.reader(archivo)
 
 class Hospital:
     def __init__(self):
         self.pacientes = []
         self.medicos = []
 
-with open('medicos.json', 'r') as archivo:
-    medicos_data = json.load(archivo)
-    print(medicos_data)
+
 
     def agregar_paciente(self, paciente):
         self.pacientes.append(paciente)
