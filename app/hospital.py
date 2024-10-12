@@ -20,7 +20,7 @@ class Hospital:
 
     def cargar_medicos(self):
         try:
-            with open('medicos.json', 'r', encoding='utf-8') as archivo:
+            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\medicos.json", encoding='utf-8') as archivo:
                 medicos_json = json.load(archivo)
                 for medico_data in medicos_json:
                     medico = Medico(
@@ -37,7 +37,7 @@ class Hospital:
 
     def cargar_pacientes(self):
         try:
-            with open('pacientes.csv', 'r', encoding='utf-8') as archivo:
+            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\pacientes.csv", encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
                 next(lector_csv) 
                 for fila in lector_csv:
@@ -54,7 +54,7 @@ class Hospital:
 
     def cargar_citas(self):
         try:
-            with open('citas.csv', 'r', encoding='utf-8') as archivo:
+            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\citas.csv", encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
                 next(lector_csv)
                 for fila in lector_csv:
