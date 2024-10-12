@@ -11,9 +11,6 @@ class Hospital:
         self.pacientes = []
         self.medicos = []
         self.citas = []
-        self.cargar_datos_iniciales()
-
-    def cargar_datos_iniciales(self):
         self.cargar_medicos()
         self.cargar_pacientes()
         self.cargar_citas()
@@ -23,23 +20,27 @@ class Hospital:
             with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\medicos.json", encoding='utf-8') as archivo:
                 medicos_json = json.load(archivo)
                 for medico_data in medicos_json:
-                    medico = Medico(
-                        medico_data['id'], 
-                        medico_data['nombre'], 
-                        medico_data['celular'], 
-                        medico_data['correo'],
-                        medico_data['especialidad']
-                    )
-                    self.agregar_medico(medico)
-            self.console.print(f"[green]Se han cargado {len(self.medicos)} médicos.[/green]")
+                    if all(key in medico_data for key in ['id', 'nombre', 'celular', 'especialidad']):
+                        medico = Medico(
+                            medico_data['id'], 
+                            medico_data['nombre'], 
+                            medico_data['celular'], 
+                            medico_data['especialidad']
+                        )
+                        self.medicos.append(medico)
+                self.console.print(f"[green]Se han cargado {len(self.medicos)} médicos.[/green]")
+        except FileNotFoundError:
+            self.console.print("[red]El archivo medicos.json no fue encontrado.[/red]")
+        except json.JSONDecodeError:
+            self.console.print("[red]Error al parsear el archivo JSON. Verifique el formato del archivo.[/red]")
         except Exception as e:
-            self.console.print(f"[red]Error al cargar médicos: {e}[/red]")
+            self.console.print(f"[red]Error inesperado al cargar médicos: {e}[/red]")
 
     def cargar_pacientes(self):
         try:
             with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\pacientes.csv", encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
-                next(lector_csv) 
+                next(lector_csv)  # Ignora el encabezado
                 for fila in lector_csv:
                     paciente = Paciente(
                         fila[0],  # ID
@@ -49,24 +50,32 @@ class Hospital:
                     )
                     self.agregar_paciente(paciente)
             self.console.print(f"[green]Se han cargado {len(self.pacientes)} pacientes.[/green]")
+        except FileNotFoundError:
+            self.console.print("[red]El archivo pacientes.csv no fue encontrado.[/red]")
         except Exception as e:
-            self.console.print(f"[red]Error al cargar pacientes: {e}[/red]")
+            self.console.print(f"[red]Error inesperado al cargar pacientes: {e}[/red]")
 
     def cargar_citas(self):
         try:
             with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\citas.csv", encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
-                next(lector_csv)
+                next(lector_csv)  # Ignora el encabezado
                 for fila in lector_csv:
-                    paciente = self.buscar_paciente(fila[1])
-                    medico = self.buscar_medico(fila[2])
+                    paciente = self.buscar_paciente(fila[1])  # ID del paciente
+                    medico = self.buscar_medico(fila[2])  # ID del médico
                     if paciente and medico:
-                        cita = Cita(paciente, medico, fila[0])
-                        self.citas.append(cita)
-                        medico.agenda.agregar_cita(cita)
+                        cita = Cita(
+                            paciente,
+                            medico,
+                            fila[0]  # Fecha de la cita
+                        )
+                        self.citas.append(cita) 
+                        medico.agregar_cita(cita)  # Agregar a la agenda del médico
             self.console.print(f"[green]Se han cargado {len(self.citas)} citas.[/green]")
+        except FileNotFoundError:
+            self.console.print("[red]El archivo citas.csv no fue encontrado.[/red]")
         except Exception as e:
-            self.console.print(f"[red]Error al cargar citas: {e}[/red]")
+            self.console.print(f"[red]Error inesperado al cargar citas: {e}[/red]")
 
     def agregar_paciente(self, paciente):
         self.pacientes.append(paciente)
@@ -83,41 +92,30 @@ class Hospital:
     def buscar_medicos_por_especialidad(self, especialidad):
         return [m for m in self.medicos if m.especialidad == especialidad]
 
-    def agendar_cita(self, paciente_id, especialidad, fecha):
-        paciente = self.buscar_paciente(paciente_id)
-        medicos = self.buscar_medicos_por_especialidad(especialidad)
-        if not medicos:
-            print(f"No hay médicos disponibles para la especialidad {especialidad}.")
-            return
+    def cancelar_cita(self, id_paciente, fecha_cita):
+        paciente = self.buscar_paciente(id_paciente)
+        if not paciente:
+            self.console.print(f"[red]Paciente con identificación {id_paciente} no encontrado.[/red]")
+            return False
         
-        for medico in medicos:
-            if medico.verificar_disponibilidad(fecha):
-                medico.agendar_cita(paciente, fecha)
-                self.citas.append(Cita(paciente, medico, fecha))
-                return
-        print(f"No hay disponibilidad en la fecha {fecha}.")
+        # Buscar la cita en las citas pendientes del paciente
+        cita_a_cancelar = None
+        for cita in self.citas:
+            if cita.paciente == paciente and cita.fecha == fecha_cita:
+                cita_a_cancelar = cita
+                break
 
-    def cancelar_cita(self, paciente_id, fecha):
-        paciente = self.buscar_paciente(paciente_id)
-        cita = next((c for c in self.citas if c.paciente == paciente and c.fecha == fecha), None)
-        if cita:
-            cita.cancelar_cita()
-            cita.medico.cancelar_cita(cita)
-            self.citas.remove(cita)
-        else:
-            print("No se encontró la cita para cancelar.")
+        if not cita_a_cancelar:
+            self.console.print(f"[red]No se encontró una cita para el paciente {paciente.nombre} en la fecha {fecha_cita}.[/red]")
+            return False
 
-    def reprogramar_cita(self, paciente_id, fecha_actual, nueva_fecha):
-        paciente = self.buscar_paciente(paciente_id)
-        cita = next((c for c in self.citas if c.paciente == paciente and c.fecha == fecha_actual), None)
-        if cita:
-            if cita.medico.verificar_disponibilidad(nueva_fecha):
-                cita.fecha = nueva_fecha
-                print(f"Cita reprogramada para el {nueva_fecha}.")
-            else:
-                print("No hay disponibilidad en la nueva fecha.")
-        else:
-            print("No se encontró la cita para reprogramar.")
+        # Cancelar la cita en la agenda del médico
+        cita_a_cancelar.medico.cancelar_cita(cita_a_cancelar)
+        
+        # Remover la cita del listado de citas del hospital
+        self.citas.remove(cita_a_cancelar)
+        self.console.print(f"[green]La cita del paciente {paciente.nombre} con el Dr. {cita_a_cancelar.medico.nombre} para el {fecha_cita} ha sido cancelada.[/green]")
+        return True
 
 
 

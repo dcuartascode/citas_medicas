@@ -13,9 +13,9 @@ class Agenda:
             print("La cita no se encuentra en la agenda.")
 
     def verificar_disponibilidad(self, fecha):
-        for cita in self.citas_pendientes:
-            if cita.fecha == fecha:
-                return False
-        return True
+        # Verifica si hay disponibilidad en esa fecha
+        return all(cita.fecha != fecha for cita in self.citas_pendientes)
+
+
 
 

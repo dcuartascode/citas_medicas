@@ -27,8 +27,7 @@ while True:
 
         if tipo_persona == "medico":
             especialidad = console.input("Ingrese la especialidad: ")
-            correo = console.input("Ingrese el correo: ")
-            persona = PersonasFactory.crear_persona("medico", identificacion, nombre, celular, especialidad, correo)
+            persona = PersonasFactory.crear_persona("medico", identificacion, nombre, celular, especialidad)
             hospital.agregar_medico(persona)
             console.print(f"[green]Médico {nombre} agregado exitosamente.[/green]")
         elif tipo_persona == "paciente":
@@ -42,8 +41,7 @@ while True:
     elif opcion == "2":  # Pedir cita
         id_paciente = console.input("Ingrese la identificación del paciente: ")
         especialidad = console.input("Ingrese la especialidad requerida: ")
-        fecha = console.input("Ingrese la fecha de la cita (YYYY-MM-DD HH:MM): ")  # Incluye fecha y hora en intervalos de 20 minutos
-        motivo = console.input("Ingrese el motivo de la cita: ")
+        fecha = console.input("Ingrese la fecha y hora de la cita (YYYY-MM-DD HH:MM): ")
 
         paciente = hospital.buscar_paciente(id_paciente)
         if paciente:
@@ -62,7 +60,7 @@ while True:
                 opcion_medico = int(console.input("Seleccione el médico (número): ")) - 1
                 if 0 <= opcion_medico < len(medicos_disponibles):
                     medico_seleccionado = medicos_disponibles[opcion_medico]
-                    hospital.agendar_cita(id_paciente, especialidad, fecha)
+                    paciente.agendar_cita(medico_seleccionado, fecha)
                     console.print(f"[green]Cita asignada exitosamente con el Dr. {medico_seleccionado.nombre} para el {fecha}.[/green]")
                 else:
                     console.print("[red]Opción de médico inválida.[/red]")
@@ -74,10 +72,30 @@ while True:
     elif opcion == "3":  # Cancelar cita
         id_paciente = console.input("Ingrese la identificación del paciente: ")
         paciente = hospital.buscar_paciente(id_paciente)
+
         if paciente:
-            fecha_cita = console.input("Ingrese la fecha de la cita a cancelar (YYYY-MM-DD HH:MM): ")
-            hospital.cancelar_cita(id_paciente, fecha_cita)
-            console.print("[green]Cita cancelada exitosamente.[/green]")
+            citas_pendientes = [cita for cita in hospital.citas if cita.paciente == paciente]
+
+            if citas_pendientes:
+                console.print("[bold]Citas pendientes:[/bold]")
+                table = Table(title="Citas Pendientes")
+                table.add_column("No.", justify="right")
+                table.add_column("Fecha", style="cyan")
+                table.add_column("Médico", style="magenta")
+
+                # Mostrar las citas pendientes del paciente
+                for i, cita in enumerate(citas_pendientes):
+                    table.add_row(str(i + 1), cita.fecha, cita.medico.nombre)
+
+                console.print(table)
+                opcion_cita = int(console.input("Seleccione la cita a cancelar (número): ")) - 1
+                if 0 <= opcion_cita < len(citas_pendientes):
+                    cita_seleccionada = citas_pendientes[opcion_cita]
+                    hospital.cancelar_cita(paciente.identificacion, cita_seleccionada.fecha)
+                else:
+                    console.print("[red]Número de cita inválido.[/red]")
+            else:
+                console.print("[red]El paciente no tiene citas pendientes.[/red]")
         else:
             console.print("[red]Paciente no encontrado.[/red]")
 
@@ -100,7 +118,7 @@ while True:
 
         if paciente:
             console.print("[bold]Citas pendientes:[/bold]")
-            citas_pendientes = [c for c in hospital.citas if c.paciente == paciente]
+            citas_pendientes = [cita for cita in hospital.citas if cita.paciente == paciente]
 
             if citas_pendientes:
                 table = Table(title="Citas Pendientes")
@@ -123,5 +141,4 @@ while True:
 
     else:
         console.print("[red]Opción inválida.[/red]")
-
 
