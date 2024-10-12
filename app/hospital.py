@@ -90,6 +90,22 @@ class Hospital:
             print(f"No hay médicos disponibles para la especialidad {especialidad}.")
             return
         
+        for medico in medicos:
+            if medico.verificar_disponibilidad(fecha):
+                medico.agendar_cita(paciente, fecha)
+                self.citas.append(Cita(paciente, medico, fecha))
+                return
+        print(f"No hay disponibilidad en la fecha {fecha}.")
+
+    def cancelar_cita(self, paciente_id, fecha):
+        paciente = self.buscar_paciente(paciente_id)
+        cita = next((c for c in self.citas if c.paciente == paciente and c.fecha == fecha), None)
+        if cita:
+            cita.cancelar_cita()
+            cita.medico.cancelar_cita(cita)
+            self.citas.remove(cita)
+        else:
+            print("No se encontró la cita para cancelar.")
 
 
 
