@@ -107,6 +107,17 @@ class Hospital:
         else:
             print("No se encontró la cita para cancelar.")
 
+    def reprogramar_cita(self, paciente_id, fecha_actual, nueva_fecha):
+        paciente = self.buscar_paciente(paciente_id)
+        cita = next((c for c in self.citas if c.paciente == paciente and c.fecha == fecha_actual), None)
+        if cita:
+            if cita.medico.verificar_disponibilidad(nueva_fecha):
+                cita.fecha = nueva_fecha
+                print(f"Cita reprogramada para el {nueva_fecha}.")
+            else:
+                print("No hay disponibilidad en la nueva fecha.")
+        else:
+            print("No se encontró la cita para reprogramar.")
 
 
 
