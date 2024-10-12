@@ -7,23 +7,27 @@ from rich.console import Console
 
 class Hospital:
     def __init__(self):
-        self.console = Console()  
+        self.console = Console()
         self.pacientes = []
         self.medicos = []
-        self.citas = []  
+        self.citas = []
+        self.cargar_datos_iniciales()
+
+    def cargar_datos_iniciales(self):
         self.cargar_medicos()
         self.cargar_pacientes()
         self.cargar_citas()
 
     def cargar_medicos(self):
         try:
-            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\medicos.json", 'r', encoding='utf-8') as archivo:
+            with open('medicos.json', 'r', encoding='utf-8') as archivo:
                 medicos_json = json.load(archivo)
                 for medico_data in medicos_json:
                     medico = Medico(
                         medico_data['id'], 
                         medico_data['nombre'], 
-                        medico_data['correo'], 
+                        medico_data['celular'], 
+                        medico_data['correo'],
                         medico_data['especialidad']
                     )
                     self.agregar_medico(medico)
@@ -33,7 +37,7 @@ class Hospital:
 
     def cargar_pacientes(self):
         try:
-            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\pacientes.csv", 'r', encoding='utf-8') as archivo:
+            with open('pacientes.csv', 'r', encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
                 next(lector_csv) 
                 for fila in lector_csv:
@@ -50,21 +54,16 @@ class Hospital:
 
     def cargar_citas(self):
         try:
-            with open(r"C:\Users\david\Desktop\Nueva carpeta\citas_medicas\datos\citas.csv", 'r', encoding='utf-8') as archivo:
+            with open('citas.csv', 'r', encoding='utf-8') as archivo:
                 lector_csv = csv.reader(archivo)
-                next(lector_csv) 
+                next(lector_csv)
                 for fila in lector_csv:
-                    paciente = self.buscar_paciente(fila[1])  # ID del paciente
-                    medico = self.buscar_medico(fila[2])  # ID del médico
+                    paciente = self.buscar_paciente(fila[1])
+                    medico = self.buscar_medico(fila[2])
                     if paciente and medico:
-                        cita = Cita(
-                            paciente,
-                            medico,
-                            fila[0]  # Fecha de la cita
-                        )
-                        self.citas.append(cita) 
-                        paciente.agenda.agregar_cita(cita)  
-                        medico.agenda.agregar_cita(cita) 
+                        cita = Cita(paciente, medico, fila[0])
+                        self.citas.append(cita)
+                        medico.agenda.agregar_cita(cita)
             self.console.print(f"[green]Se han cargado {len(self.citas)} citas.[/green]")
         except Exception as e:
             self.console.print(f"[red]Error al cargar citas: {e}[/red]")
@@ -80,5 +79,18 @@ class Hospital:
 
     def buscar_medico(self, identificacion):
         return next((m for m in self.medicos if m.identificacion == identificacion), None)
+
+    def buscar_medicos_por_especialidad(self, especialidad):
+        return [m for m in self.medicos if m.especialidad == especialidad]
+
+    def agendar_cita(self, paciente_id, especialidad, fecha):
+        paciente = self.buscar_paciente(paciente_id)
+        medicos = self.buscar_medicos_por_especialidad(especialidad)
+        if not medicos:
+            print(f"No hay médicos disponibles para la especialidad {especialidad}.")
+            return
+        
+
+
 
 

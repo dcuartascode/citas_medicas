@@ -5,7 +5,7 @@ class PersonasFactory:
     @staticmethod
     def crear_persona(tipo, identificacion, nombre, celular, especialidad=None, correo=None):
         if tipo.lower() == 'medico':
-            return Medico(identificacion, nombre, celular, especialidad)
+            return Medico(identificacion, nombre, celular, correo, especialidad)
         elif tipo.lower() == 'paciente':
             return Paciente(identificacion, nombre, celular, correo)
         else:
