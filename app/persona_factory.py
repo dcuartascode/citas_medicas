@@ -10,5 +10,3 @@ class PersonasFactory:
             return Paciente(identificacion, nombre, celular, correo)
         else:
             raise ValueError(f"Tipo de persona desconocido: {tipo}")
-
-

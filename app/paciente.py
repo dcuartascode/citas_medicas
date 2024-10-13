@@ -16,6 +16,3 @@ class Paciente(Persona):
             print(f"Cita solicitada para el {fecha} con el Dr. {medico.nombre}.")
         else:
             print(f"No hay disponibilidad con el Dr. {medico.nombre} en la fecha {fecha}.")
-
-
-

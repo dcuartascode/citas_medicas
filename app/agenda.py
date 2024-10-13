@@ -13,7 +13,6 @@ class Agenda:
             print("La cita no se encuentra en la agenda.")
 
     def verificar_disponibilidad(self, fecha):
-        # Verifica si hay disponibilidad en esa fecha
         return all(cita.fecha != fecha for cita in self.citas_pendientes)
 
 

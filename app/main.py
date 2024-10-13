@@ -13,7 +13,10 @@ def mostrar_menu():
     console.print("3. Cancelar cita")
     console.print("4. Asignar médico de preferencia")
     console.print("5. Ver citas pendientes")
-    console.print("6. Salir")
+    console.print("6. Reagendar cita")  # Nueva opción
+    console.print("7. Actualizar paciente")  # Nueva opción
+    console.print("8. Actualizar médico")  # Nueva opción
+    console.print("9. Salir")
 
 while True:
     mostrar_menu()
@@ -135,7 +138,30 @@ while True:
         else:
             console.print("[red]Paciente no encontrado.[/red]")
 
-    elif opcion == "6":  # Salir del programa
+    elif opcion == "6":  # Reagendar cita
+        id_paciente = console.input("Ingrese la identificación del paciente: ")
+        fecha_actual = console.input("Ingrese la fecha actual de la cita (YYYY-MM-DD HH:MM): ")
+        nueva_fecha = console.input("Ingrese la nueva fecha y hora de la cita (YYYY-MM-DD HH:MM): ")
+
+        hospital.reagendar_cita(id_paciente, fecha_actual, nueva_fecha)
+
+    elif opcion == "7":  # Actualizar paciente
+        id_paciente = console.input("Ingrese la identificación del paciente a actualizar: ")
+        nuevo_nombre = console.input("Ingrese el nuevo nombre (o presione Enter para no cambiar): ")
+        nuevo_celular = console.input("Ingrese el nuevo celular (o presione Enter para no cambiar): ")
+        nuevo_correo = console.input("Ingrese el nuevo correo (o presione Enter para no cambiar): ")
+
+        hospital.actualizar_paciente(id_paciente, nuevo_nombre, nuevo_celular, nuevo_correo)
+
+    elif opcion == "8":  # Actualizar médico
+        id_medico = console.input("Ingrese la identificación del médico a actualizar: ")
+        nuevo_nombre = console.input("Ingrese el nuevo nombre (o presione Enter para no cambiar): ")
+        nuevo_celular = console.input("Ingrese el nuevo celular (o presione Enter para no cambiar): ")
+        nueva_especialidad = console.input("Ingrese la nueva especialidad (o presione Enter para no cambiar): ")
+
+        hospital.actualizar_medico(id_medico, nuevo_nombre, nuevo_celular, nueva_especialidad)
+
+    elif opcion == "9":  # Salir del programa
         console.print("[bold green]Saliendo del programa...[/bold green]")
         break
 

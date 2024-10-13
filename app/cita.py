@@ -8,8 +8,3 @@ class Cita:
     def cancelar_cita(self):
         self.motivo_cancelacion = "Cancelada"
         print(f"La cita con el Dr. {self.medico.nombre} ha sido cancelada.")
-
-
-
-
-

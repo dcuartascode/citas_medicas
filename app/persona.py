@@ -4,4 +4,3 @@ class Persona:
         self.nombre = nombre
         self.celular = celular
         self.correo = correo
-

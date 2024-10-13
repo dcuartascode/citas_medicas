@@ -117,5 +117,53 @@ class Hospital:
         self.console.print(f"[green]La cita del paciente {paciente.nombre} con el Dr. {cita_a_cancelar.medico.nombre} para el {fecha_cita} ha sido cancelada.[/green]")
         return True
 
+    # Mejora propia
+    def reagendar_cita(self, id_paciente, fecha_actual, nueva_fecha):
+        paciente = self.buscar_paciente(id_paciente)
+        if not paciente:
+            self.console.print(f"[red]Paciente con identificación {id_paciente} no encontrado.[/red]")
+            return False
+        cita_a_reagendar = None
+        for cita in self.citas:
+            if cita.paciente == paciente and cita.fecha == fecha_actual:
+                cita_a_reagendar = cita
+                break
 
+        if not cita_a_reagendar:
+            self.console.print(f"[red]No se encontró una cita para el paciente {paciente.nombre} en la fecha {fecha_actual}.[/red]")
+            return False
+        
+        if cita_a_reagendar.medico.verificar_disponibilidad(nueva_fecha):
+            cita_a_reagendar.fecha = nueva_fecha
+            self.console.print(f"[green]La cita del paciente {paciente.nombre} ha sido reagendada a {nueva_fecha} con el Dr. {cita_a_reagendar.medico.nombre}.[/green]")
+            return True
+        else:
+            self.console.print(f"[red]El médico {cita_a_reagendar.medico.nombre} no tiene disponibilidad en la nueva fecha {nueva_fecha}.[/red]")
+            return False
 
+    # Mejora propia
+    def actualizar_paciente(self, id_paciente, nuevo_nombre=None, nuevo_celular=None, nuevo_correo=None):
+        paciente = self.buscar_paciente(id_paciente)
+        if paciente:
+            if nuevo_nombre:
+                paciente.nombre = nuevo_nombre
+            if nuevo_celular:
+                paciente.celular = nuevo_celular
+            if nuevo_correo:
+                paciente.correo = nuevo_correo
+            self.console.print(f"[green]Información del paciente {paciente.identificacion} actualizada exitosamente.[/green]")
+        else:
+            self.console.print(f"[red]Paciente con identificación {id_paciente} no encontrado.[/red]")
+
+    def actualizar_medico(self, id_medico, nuevo_nombre=None, nuevo_celular=None, nueva_especialidad=None):
+        medico = self.buscar_medico(id_medico)
+        if medico:
+            if nuevo_nombre:
+                medico.nombre = nuevo_nombre
+            if nuevo_celular:
+                medico.celular = nuevo_celular
+            if nueva_especialidad:
+                medico.especialidad = nueva_especialidad
+            self.console.print(f"[green]Información del médico {medico.identificacion} actualizada exitosamente.[/green]")
+        else:
+            self.console.print(f"[red]Médico con identificación {id_medico} no encontrado.[/red]")

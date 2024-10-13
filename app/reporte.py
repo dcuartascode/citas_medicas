@@ -10,7 +10,6 @@ class Reporte:
     def exportar_Excel(self):
         print(f"Exportando reporte {self.tipo_reporte} a Excel")
 
-
 class ReporteDemanda(Reporte):
     def __init__(self, tipo_reporte, fecha_inicio, fecha_fin, medico):
         super().__init__(tipo_reporte, fecha_inicio, fecha_fin)
@@ -18,7 +17,6 @@ class ReporteDemanda(Reporte):
 
     def generar_reporte(self):
         print(f"Generando reporte de demanda para el Dr. {self.medico.nombre}")
-
 
 class ReporteTendencias(Reporte):
     def __init__(self, tipo_reporte, fecha_inicio, fecha_fin, citas_agendadas):
@@ -36,7 +34,6 @@ class ReporteCancelaciones(Reporte):
 
     def generar_reporte(self):
         print(f"Generando reporte de cancelaciones por motivo: {self.motivo_cancelacion}")
-
 
 class ReporteAusentismo(Reporte):
     def __init__(self, tipo_reporte, fecha_inicio, fecha_fin, citas_ausentes):
